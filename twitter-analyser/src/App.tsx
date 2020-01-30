@@ -10,7 +10,6 @@ const App: React.FC = () => {
       <SearchBar
         onHashtagChanged={hashtag => {
           setHashtag(hashtag);
-          console.log("value", hashtag);
         }}
       />
     </div>
