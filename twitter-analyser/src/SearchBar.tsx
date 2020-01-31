@@ -13,15 +13,15 @@ const useStyles = makeStyles(theme => ({
 
 interface Props {
   //Function that takes the searched hashtag and returns it to the container
-  onHashtagChanged: (hashtag: string) => void;
+  onSearchTermChanged: (searchTerm: string) => void;
 }
 
 const SearchBar: React.FC<Props> = props => {
   const classes = useStyles();
-  const [hashtag, setHashtag] = React.useState("");
+  const [searchTerm, setSearchTerm] = React.useState("");
   function keyPress(keyCodeValue: any) {
     if (keyCodeValue == 13) {
-      props.onHashtagChanged(hashtag);
+      props.onSearchTermChanged(searchTerm);
     }
   }
   return (
@@ -42,7 +42,7 @@ const SearchBar: React.FC<Props> = props => {
               variant="outlined"
               fullWidth
               onChange={event => {
-                setHashtag(event.target.value);
+                setSearchTerm(event.target.value);
               }}
               onKeyDown={event => {
                 keyPress(event.keyCode);
