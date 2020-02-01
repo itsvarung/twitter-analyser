@@ -21,7 +21,9 @@ const SearchBar: React.FC<Props> = props => {
   const [searchTerm, setSearchTerm] = React.useState("");
   function keyPress(keyCodeValue: any) {
     if (keyCodeValue == 13) {
-      props.onSearchTermChanged(searchTerm);
+      if (searchTerm.length != 0) {
+        props.onSearchTermChanged(searchTerm);
+      }
     }
   }
   return (
@@ -38,7 +40,7 @@ const SearchBar: React.FC<Props> = props => {
           >
             <TextField
               id="outlined-basic"
-              label="Search for a hashtag"
+              label="What sort of news are you looking for?"
               variant="outlined"
               fullWidth
               onChange={event => {
