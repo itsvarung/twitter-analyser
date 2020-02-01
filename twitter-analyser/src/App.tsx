@@ -34,7 +34,8 @@ const App: React.FC = () => {
     articles: []
   });
 
-  function fetchNews(searchTerm: string) {
+  // Generates API Request with the users search Term
+  async function generateRequest(searchTerm: string): Promise<Request> {
     var url =
       "https://newsapi.org/v2/everything?" +
       "q=" +
@@ -42,8 +43,12 @@ const App: React.FC = () => {
       "&" +
       "apiKey=4c66e7adfd0e448fa046d66e26a559e3";
     var req = new Request(url);
-    alert(url);
-    fetch(req)
+    return req;
+  }
+
+  // Performs data fetch from News API
+  async function fetchNews(request: Request) {
+    fetch(request)
       .then(function(response) {
         return response.json();
       })
@@ -53,12 +58,17 @@ const App: React.FC = () => {
         setData(processedData);
       });
   }
+
   return (
     <div className="App">
       <SearchBar
-        onSearchTermChanged={searchTerm => {
-          // setSearchTerm(searchTerm);
-          fetchNews(searchTerm);
+        onSearchTermChanged={async searchTerm => {
+          try {
+            const request = await generateRequest(searchTerm);
+            await fetchNews(request);
+          } catch (e) {
+            alert(e);
+          }
         }}
       />
       <NewsArticles articles={data.articles} />
