@@ -1,7 +1,6 @@
 import React from "react";
 import "./App.css";
 import SearchBar from "./SearchBar";
-import { Url } from "url";
 import NewsArticles from "./NewsArticles";
 
 export interface Data {
@@ -28,6 +27,7 @@ export interface Source {
 
 const App: React.FC = () => {
   const [searchTerm, setSearchTerm] = React.useState("");
+  const [sentiment, setSentiment] = React.useState(0);
   const [data, setData] = React.useState<Data>({
     status: "",
     totalResults: 0,
@@ -47,16 +47,28 @@ const App: React.FC = () => {
   }
 
   // Performs data fetch from News API
-  async function fetchNews(request: Request) {
-    fetch(request)
-      .then(function(response) {
-        return response.json();
-      })
-      .then(function(jsonData) {
-        console.log(jsonData);
-        var processedData: Data = jsonData;
-        setData(processedData);
-      });
+  async function fetchNews(request: Request): Promise<Data | undefined> {
+    try {
+      const response = await fetch(request);
+      if (!response) {
+        throw new Error("There was no data returned by the API");
+      }
+      const typeCastedResponse: Data = await response.json();
+      return typeCastedResponse;
+    } catch (e) {
+      console.error(e);
+    }
+  }
+
+  async function calculateSentiment(articles: Article[]): Promise<number> {
+    var sentimentTotal = 0;
+    articles.forEach(article => {
+      var Sentiment = require("sentiment");
+      var sentiment = new Sentiment();
+      sentimentTotal += sentiment.analyze(article.description);
+      alert(sentiment);
+    });
+    return sentimentTotal / articles.length;
   }
 
   return (
@@ -65,9 +77,16 @@ const App: React.FC = () => {
         onSearchTermChanged={async searchTerm => {
           try {
             const request = await generateRequest(searchTerm);
-            await fetchNews(request);
+            const returnedData = await fetchNews(request);
+            if (returnedData != undefined) {
+              setData(returnedData);
+              const sentimentValue = await calculateSentiment(data.articles);
+              setSentiment(sentimentValue);
+            } else {
+              throw new Error("undefined value returned");
+            }
           } catch (e) {
-            alert(e);
+            console.error(e);
           }
         }}
       />
