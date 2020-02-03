@@ -1,7 +1,8 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import "./App.css";
 import SearchBar from "./SearchBar";
 import NewsArticles from "./NewsArticles";
+import SentimentAnalysisResults from "./SentimentAnalysisResults";
 
 export interface Data {
   status: string;
@@ -34,6 +35,14 @@ const App: React.FC = () => {
     articles: []
   });
 
+  // performs sentiment calculation when data is returned from API
+  useEffect(() => {
+    if (data.articles.length != 0) {
+      const sentimentValue = calculateSentiment(data.articles);
+      setSentiment(sentimentValue);
+    }
+  });
+
   // Generates API Request with the users search Term
   async function generateRequest(searchTerm: string): Promise<Request> {
     var url =
@@ -60,13 +69,14 @@ const App: React.FC = () => {
     }
   }
 
-  async function calculateSentiment(articles: Article[]): Promise<number> {
-    var sentimentTotal = 0;
+  // calculate the sentiment value of the set of articles retured by the API
+  function calculateSentiment(articles: Article[]): number {
+    var sentimentTotal: number = 0;
     articles.forEach(article => {
       var Sentiment = require("sentiment");
       var sentiment = new Sentiment();
-      sentimentTotal += sentiment.analyze(article.description);
-      alert(sentiment);
+      sentimentTotal =
+        sentimentTotal + sentiment.analyze(article.description).score;
     });
     return sentimentTotal / articles.length;
   }
@@ -80,8 +90,6 @@ const App: React.FC = () => {
             const returnedData = await fetchNews(request);
             if (returnedData != undefined) {
               setData(returnedData);
-              const sentimentValue = await calculateSentiment(data.articles);
-              setSentiment(sentimentValue);
             } else {
               throw new Error("undefined value returned");
             }
@@ -90,6 +98,7 @@ const App: React.FC = () => {
           }
         }}
       />
+      <SentimentAnalysisResults sentimentValue={sentiment} />
       <NewsArticles articles={data.articles} />
     </div>
   );

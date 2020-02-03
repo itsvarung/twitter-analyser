@@ -6,7 +6,8 @@ import TextField from "@material-ui/core/TextField";
 const useStyles = makeStyles(theme => ({
   root: {
     flexGrow: 1,
-    padding: 150
+    paddingTop: "30vh",
+    padding: theme.spacing(2)
   }
 }));
 
@@ -27,11 +28,10 @@ const SearchBar: React.FC<Props> = props => {
   }
   return (
     <div>
-      <Grid container spacing={0}>
+      <Grid container spacing={0} className={classes.root}>
         <Grid item xs={2}></Grid>
         <Grid item xs={8}>
           <form
-            className={classes.root}
             autoComplete="on"
             onSubmit={event => {
               event.preventDefault();
