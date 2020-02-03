@@ -8,6 +8,6 @@ test("renders learn react link", () => {
   expect(linkElement).toBeInTheDocument();
 });
 
-const generateRequest = require("./generateRequest");
-
-test("");
+// test("Check if URL is properly generated", () => {
+//   expect(generateRequest);
+// });
